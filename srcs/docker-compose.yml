@@ -1,19 +1,19 @@
-version: '3'
+version: '3.8'
 services:
-
-  db:
-    build: ./requirements/mariadb/Dockerfile
-    container_name: mariadb
-    ports:
-      - "3306:3306"
+  mariadb:
+    build: ./requirements/mariadb
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-  web:
-    build: ./path/to/webapp
-    image: web
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ADMIN_USER: ${MYSQL_ADMIN_USER}
+      MYSQL_ADMIN_PASSWORD: ${MYSQL_ADMIN_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - network
+    restart: always
+networks:
+  network:
+volumes:
+  db_data:

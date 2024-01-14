@@ -6,7 +6,7 @@
 #    By: abaiao-r <abaiao-r@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/09 16:31:31 by abaiao-r          #+#    #+#              #
-#    Updated: 2024/01/09 16:44:07 by abaiao-r         ###   ########.fr        #
+#    Updated: 2024/01/14 18:51:35 by abaiao-r         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,10 @@ up:
 # Stop and remove the Docker containers defined in the docker-compose.yml file
 down:
 	docker-compose -f srcs/docker-compose.yml down
+
+# Start the MariaDB Docker container
+run-mariadb:
+	docker-compose -f srcs/docker-compose.yml up -d mariadb
 
 # Declare the targets as phony to avoid conflicts with file names
 .PHONY: build up down

@@ -6,24 +6,31 @@
 #    By: abaiao-r <abaiao-r@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 15:06:57 by abaiao-r          #+#    #+#              #
-#    Updated: 2024/01/03 15:11:44 by abaiao-r         ###   ########.fr        #
+#    Updated: 2024/01/09 19:05:44 by abaiao-r         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Use the penultimate stable version of Debian
-FROM debian:bullseye
+FROM debian:buster
 
-# Update and install WordPress dependencies
-RUN apt-get update && apt-get install -y php-fpm php-mysql php-json php-openssl php-curl php-zip && rm -rf /var/lib/apt/lists/*
+# Update and install necessary packages
+RUN apt-get update && apt-get install -y \
+    php-fpm \
+    php-mysql \
+    wget && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy WordPress configuration files
-COPY WordPress /var/www/html
+# Download and extract WordPress
+RUN wget https://wordpress.org/latest.tar.gz && \
+    tar -xvzf latest.tar.gz && \
+    rm latest.tar.gz
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html
+# Copy WordPress configuration file
+COPY srcs/requirements/wordpress/wp-config.php /wordpress
 
-# Expose port 9000 for PHP-FPM
+# Expose port for php-fpm
 EXPOSE 9000
 
-# Command to run PHP-FPM
-CMD ["php-fpm7.3", "-F"]
+# Command to run php-fpm in the foreground
+CMD ["php-fpm7.4", "-F"]
+
