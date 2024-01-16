@@ -1,6 +1,21 @@
 version: '3.8'
 services:
+  nginx:
+    image: nginx:1.19.6
+    container_name: nginx
+    build: ./requirements/nginx
+    ports:
+      - 443:443
+    volumes:
+      - ./srcs/requirements/nginx:/etc/nginx/sites-enabled
+      - ./srcs/requirements/nginx/localhost.crt:/etc/ssl/certs/localhost.crt
+      - ./srcs/requirements/nginx/localhost.key:/etc/ssl/private/localhost.key
+    networks:
+      - network
+    restart: always
   mariadb:
+    image: mariadb:10.5.8
+    container_name: mariadb
     build: ./requirements/mariadb
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
