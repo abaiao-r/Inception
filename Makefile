@@ -6,7 +6,7 @@
 #    By: abaiao-r <abaiao-r@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/09 16:31:31 by abaiao-r          #+#    #+#              #
-#    Updated: 2024/01/14 18:51:35 by abaiao-r         ###   ########.fr        #
+#    Updated: 2024/01/16 14:47:05 by abaiao-r         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,10 @@ down:
 # Start the MariaDB Docker container
 run-mariadb:
 	docker-compose -f srcs/docker-compose.yml up -d mariadb
+
+# Start the Nginx Docker container
+run-nginx:
+	docker-compose -f srcs/docker-compose.yml up -d nginx
 
 # Declare the targets as phony to avoid conflicts with file names
 .PHONY: build up down

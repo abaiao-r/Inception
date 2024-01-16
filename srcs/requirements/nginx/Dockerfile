@@ -6,7 +6,7 @@
 #    By: abaiao-r <abaiao-r@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 15:05:28 by abaiao-r          #+#    #+#              #
-#    Updated: 2024/01/16 13:39:11 by abaiao-r         ###   ########.fr        #
+#    Updated: 2024/01/16 14:45:46 by abaiao-r         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ COPY generate-certificate.sh /generate-certificate.sh
 RUN chmod +x /generate-certificate.sh && /generate-certificate.sh
 
 # Copy Nginx configuration files
-COPY srcs/requirements/nginx/nginx.conf /etc/nginx/sites-enabled/
+COPY ./conf/nginx.conf /etc/nginx/sites-enabled/
 
 # Copy SSL certificate files and private key
 #COPY srcs/requirements/nginx/localhost.crt /etc/ssl/certs/
