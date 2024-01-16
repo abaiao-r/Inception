@@ -5,11 +5,8 @@ services:
     container_name: nginx
     build: ./requirements/nginx
     ports:
-      - 443:443
+      - "443:443"
     volumes:
-      - ./srcs/requirements/nginx:/etc/nginx/sites-enabled
-      - ./srcs/requirements/nginx/localhost.crt:/etc/ssl/certs/localhost.crt
-      - ./srcs/requirements/nginx/localhost.key:/etc/ssl/private/localhost.key
       - wordpress_volume:/var/www/html
     networks:
       - network

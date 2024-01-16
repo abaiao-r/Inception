@@ -25,6 +25,20 @@ up:
 down:
 	docker-compose -f srcs/docker-compose.yml down
 
+clean:
+# down: Stop and remove containers, networks, images
+# --volumes: also removes volumes
+# --rmi: Remove images.
+	docker compose -f srcs/docker-compose.yml down --volumes --rmi all
+
+fclean: clean
+# prune: Remove unused data
+# -a: Remove all unused images not just dangling ones
+# --volumes: Prune volumes
+# --force: Do not prompt for confirmation
+	docker system prune -a --volumes --force
+	rm -rf /home/abaiao-r/data
+
 # Start the MariaDB Docker container
 run-mariadb:
 	docker-compose -f srcs/docker-compose.yml up -d mariadb

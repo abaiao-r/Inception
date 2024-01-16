@@ -16,24 +16,21 @@ FROM debian:bullseye
 # Update and install Nginx
 RUN apt-get update && \
     apt-get install -y nginx openssl && \
-    rm -rf /var/lib/apt/lists/*  && \
-    rm /etc/nginx/sites-enabled/default
+    rm -rf /var/lib/apt/lists/*
 
-# Copy the script into the image
-COPY generate-certificate.sh /generate-certificate.sh
-
-# Make the script executable and run it
-RUN chmod +x /generate-certificate.sh && /generate-certificate.sh
+# create a folder for the SSL certificate and private key and then create a 
+#self-signed SSL certificate and private key in that folder
+RUN mkdir -p /etc/nginx/ssl && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
+    -subj "/C=PT/ST=Lisbon/L=Lisbon/O=42Lisbon/OU=abaiao-r/CN=abaiao-r" \
+    -keyout /etc/nginx/ssl/localhost.key \
+    -out /etc/nginx/ssl/localhost.crt
 
 # Copy Nginx configuration files
-COPY ./conf/nginx.conf /etc/nginx/sites-enabled/
-
-# Copy SSL certificate files and private key
-#COPY srcs/requirements/nginx/localhost.crt /etc/ssl/certs/
-#COPY srcs/requirements/nginx/localhost.key /etc/ssl/private/
+COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 443 for HTTPS
 EXPOSE 443
 
 # Command to run Nginx in the foreground
-CMD /generate-certificate.sh && exec nginx -g 'daemon off;'
+CMD ["nginx", "-g", "daemon off;"]
