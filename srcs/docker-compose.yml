@@ -1,7 +1,6 @@
 version: '3.8'
 services:
   nginx:
-    image: nginx:1.19.6
     container_name: nginx
     build: ./requirements/nginx
     ports:
@@ -11,8 +10,22 @@ services:
     networks:
       - network
     restart: always
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    ports:
+      - "9000:9000"
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+    volumes:
+      - ./requirements/wordpress/conf/wp-config.php:/var/www/html/wp-config.php
+    networks:
+      - network
+    restart: always
   mariadb:
-    image: mariadb:10.5.8
     container_name: mariadb
     build: ./requirements/mariadb
     environment:

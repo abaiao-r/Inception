@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-# Use the penultimate stable version of Debian
+# Dockerfile
 FROM debian:buster
 
 # Update and install necessary packages
@@ -25,12 +25,18 @@ RUN wget https://wordpress.org/latest.tar.gz && \
     tar -xvzf latest.tar.gz && \
     rm latest.tar.gz
 
+# Create /var/www/html/ directory
+RUN mkdir -p /var/www/html/
+
+# Move WordPress to /var/www/html/
+RUN mv wordpress /var/www/html/
+
 # Copy WordPress configuration file
-COPY srcs/requirements/wordpress/wp-config.php /wordpress
+COPY ./conf/wp-config.php /var/www/html/wordpress
+COPY ./conf/wp-config.php /var/www/html/wp-config.php
 
 # Expose port for php-fpm
 EXPOSE 9000
 
 # Command to run php-fpm in the foreground
-CMD ["php-fpm7.4", "-F"]
-
+CMD ["php-fpm7.3", "-F"]

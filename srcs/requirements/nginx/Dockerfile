@@ -27,7 +27,9 @@ RUN mkdir -p /etc/nginx/ssl && \
     -out /etc/nginx/ssl/localhost.crt
 
 # Copy Nginx configuration files
-COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+COPY ./conf/default.conf /etc/nginx/default.conf
+COPY ./index.html /usr/share/nginx/html
 
 # Expose port 443 for HTTPS
 EXPOSE 443

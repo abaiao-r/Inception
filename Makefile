@@ -47,5 +47,9 @@ run-mariadb:
 run-nginx:
 	docker-compose -f srcs/docker-compose.yml up -d nginx
 
+# Start the Wordpress Docker container
+run-wordpress:
+	docker-compose -f srcs/docker-compose.yml up -d wordpress
+
 # Declare the targets as phony to avoid conflicts with file names
 .PHONY: build up down
