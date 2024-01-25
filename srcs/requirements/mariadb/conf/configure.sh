@@ -1,26 +1,32 @@
 #!/bin/bash
 
-# Start the MariaDB server
-echo "Starting the MariaDB server..."
-service mysql start
-echo "MariaDB server started successfully."
+# Function to wait for MariaDB to be ready
+wait_for_mariadb() {
+    until mysqladmin ping -h localhost --silent; do
+        echo 'Waiting for MariaDB to be ready...'
+        sleep 1
+    done
+}
 
-# Create a new database
-echo "Creating a new database: ${MYSQL_DATABASE}..."
-mysql -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
-echo "Database ${MYSQL_DATABASE} created successfully."
+# Start MariaDB service
+service mariadb start
 
-# Create a new user and grant privileges
-echo "Creating a new user: ${MYSQL_USER}..."
-mysql -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
-echo "User ${MYSQL_USER} created successfully with privileges on ${MYSQL_DATABASE}."
+# Wait for MariaDB to be ready
+wait_for_mariadb
+
+# Create the database and grant privileges
+mysql -u root -e \
+    "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE; \
+    GRANT ALL ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD'; \
+    FLUSH PRIVILEGES;"
 
 # Create a second user (admin) and grant privileges
-echo "Creating admin user: ${MYSQL_ADMIN_USER}..."
-mysql -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_ADMIN_USER}'@'%' IDENTIFIED BY '${MYSQL_ADMIN_PASSWORD}';"
-echo "Admin user ${MYSQL_ADMIN_USER} created successfully with privileges on ${MYSQL_DATABASE}."
+mysql -u root -e \
+    "GRANT ALL ON $MYSQL_DATABASE.* TO '$MYSQL_ADMIN_USER'@'%' IDENTIFIED BY '$MYSQL_ADMIN_PASSWORD'; \
+    FLUSH PRIVILEGES;"
 
-# Flush privileges
-echo "Flushing privileges..."
-mysql -e "FLUSH PRIVILEGES;"
-echo "Privileges flushed successfully."
+# Stop MariaDB service
+service mariadb stop
+
+# Start MariaDB in the foreground
+exec mysqld_safe --bind-address=0.0.0.0

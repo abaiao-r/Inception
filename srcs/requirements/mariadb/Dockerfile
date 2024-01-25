@@ -16,7 +16,12 @@ FROM debian:bullseye
 # Update and install MariaDB
 RUN apt-get update && \
     apt-get install -y mariadb-server mariadb-client && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /run/mysqld && \
+    chown -R mysql:mysql /run/mysqld
+
+
+
 
 # Copy MariaDB configuration files 
 COPY conf/configure.sh /usr/local/bin/configure.sh
@@ -28,4 +33,5 @@ RUN chmod +x /usr/local/bin/configure.sh
 EXPOSE 3306
 
 # Command to run MariaDB
-CMD ["/usr/local/bin/configure.sh"]
+# Start MariaDB service
+CMD ["mysqld", "--bind-address=0.0.0.0", "--socket=/run/mysqld/mysqld.sock"]
