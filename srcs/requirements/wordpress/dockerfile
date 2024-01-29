@@ -1,0 +1,48 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Dockerfile                                         :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: abaiao-r <abaiao-r@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/01/03 15:06:57 by abaiao-r          #+#    #+#              #
+#    Updated: 2024/01/09 19:05:44 by abaiao-r         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+# Dockerfile
+FROM debian:bullseye
+
+# Update and install necessary packages
+RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    bash \
+	php \
+	php-cgi \
+	php-mysql \
+	php-fpm \
+	php-pdo \
+	php-gd php-cli \
+	php-mbstring &&\
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
+
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+
+RUN mkdir /run/php
+
+COPY ./tools/create_wordpress.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/create_wordpress.sh
+ENTRYPOINT ["/usr/local/bin/create_wordpress.sh"]
+
+WORKDIR /var/www/html
+
+# Expose port for php-fpm
+EXPOSE 9000
+
+# Command to run php-fpm in the foreground
+CMD ["/usr/sbin/php-fpm7.3", "-F"]

@@ -10,6 +10,16 @@ services:
     networks:
       - network
     restart: always
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - network
+    restart: always
+    env_file:
+      - .env
   wordpress:
     container_name: wordpress
     depends_on:
@@ -24,16 +34,6 @@ services:
       - ./wordpress_data:/var/www/html
     networks:
       - network
-  mariadb:
-    container_name: mariadb
-    build: ./requirements/mariadb
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    networks:
-      - network
-    restart: always
-    env_file:
-      - .env
 volumes:
   mariadb_data:
     driver: local
@@ -47,7 +47,6 @@ volumes:
       type: none
       device: /home/abaiao-r/data/wordpress
       o: bind
-
 networks:
   network:
     driver: bridge
