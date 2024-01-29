@@ -23,13 +23,11 @@ RUN apt-get update && \
 RUN mkdir -p /etc/nginx/ssl && \
     openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
     -subj "/C=PT/ST=Lisbon/L=Lisbon/O=42Lisbon/OU=abaiao-r/CN=abaiao-r" \
-    -keyout /etc/nginx/ssl/localhost.key \
-    -out /etc/nginx/ssl/localhost.crt
+    -keyout /etc/nginx/ssl/abaiao-r.key \
+    -out /etc/nginx/ssl/abaiao-r.crt
 
 # Copy Nginx configuration files
-COPY ./conf/nginx.conf /etc/nginx/nginx.conf
-COPY ./conf/default.conf /etc/nginx/default.conf
-COPY ./index.html /usr/share/nginx/html
+COPY ./conf/nginx.conf /etc/nginx/conf.d
 
 # Expose port 443 for HTTPS
 EXPOSE 443

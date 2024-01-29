@@ -15,23 +15,23 @@ FROM debian:bullseye
 
 # Update and install MariaDB
 RUN apt-get update && \
-    apt-get install -y mariadb-server mariadb-client && \
-    rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /run/mysqld && \
-    chown -R mysql:mysql /run/mysqld
+    apt-get install -y mariadb-server mariadb-client vim && \
+    rm -rf /var/lib/apt/lists/*
 
-
-
-
-# Copy MariaDB configuration files 
-COPY conf/configure.sh /usr/local/bin/configure.sh
-
-# Change permissions of the script and execute it
-RUN chmod +x /usr/local/bin/configure.sh
+RUN mkdir -p /var/run/mysqld && \
+    chown -R mysql:mysql /var/run/mysqld && \
+    chmod 777 /var/run/mysqld
 
 # Expose port 3306 to connect different containers
 EXPOSE 3306
 
+COPY ./tools/mariadb.sh /usr/local/bin/
+COPY ./conf/wordpress.sql /usr/local/bin/
+RUN chmod +x /usr/local/bin/mariadb.sh
+RUN chmod +x /usr/local/bin/wordpress.sql
+
+ENTRYPOINT ["/usr/local/bin/mariadb.sh"]
+
 # Command to run MariaDB
 # Start MariaDB service
-CMD ["mysqld", "--bind-address=0.0.0.0", "--socket=/run/mysqld/mysqld.sock"]
+CMD ["mysqld", "--bind-address=0.0.0.0" ]

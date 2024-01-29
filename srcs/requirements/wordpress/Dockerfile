@@ -11,10 +11,13 @@
 # **************************************************************************** #
 
 # Dockerfile
-FROM debian:buster
+FROM debian:bullseye
 
 # Update and install necessary packages
 RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    bash \
     php7.3-fpm \
     php7.3-mysql \
     php7.3-gd \
@@ -38,31 +41,22 @@ RUN apt-get update && apt-get install -y \
     wget && \
     rm -rf /var/lib/apt/lists/*
 
-# Change PHP-FPM to listen on port 9000 instead of a Unix socket
-RUN sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
 
-# Create the /run/php/ directory
-RUN mkdir -p /run/php/
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
 
-# Download and extract WordPress
-RUN wget https://wordpress.org/latest.tar.gz && \
-    tar -xvzf latest.tar.gz && \
-    rm latest.tar.gz
+RUN mkdir /run/php
 
-# Create /var/www/html/ directory
-RUN mkdir -p /var/www/html/
+COPY ./tools/wordpress.sh /usr/wordpress.sh
+RUN chmod +x /usr/local/bin/create_wordpress.sh
+ENTRYPOINT ["/usr/local/bin/create_wordpress.sh"]
 
-# Move WordPress to /var/www/html/
-RUN mv wordpress /var/www/html/
-
-# Copy WordPress configuration file
-COPY ./conf/wp-config.php /var/www/html/wordpress
-COPY ./conf/wp-config.php /var/www/html/wp-config.php
-
+WORKDIR /var/www/html
 
 # Expose port for php-fpm
 EXPOSE 9000
 
 # Command to run php-fpm in the foreground
-CMD ["php-fpm7.3", "-F"]
-#ENTRYPOINT ["sh", "-c", "sleep 2073600"]
+CMD ["/usr/sbin/php-fpm7.3", "-F"]
