@@ -1,25 +1,94 @@
-#!/bin/sh
+#!/bin/bash
 
-#check if wp-config.php exist
-if [ -f ./wp-config.php ]
-then
-	echo "wordpress already downloaded"
-else
+sleep 3
 
-	#Download wordpress and all config file
-	wget http://wordpress.org/latest.tar.gz
-	tar xfz latest.tar.gz
-	mv wordpress/* .
-	rm -rf latest.tar.gz
-	rm -rf wordpress
+conf_file="/var/www/html/wp-config.php"
 
-	#Inport env variables in the config file
-	sed -i "s/username_here/$MYSQL_USER/g" wp-config-sample.php
-	sed -i "s/password_here/$MYSQL_PASSWORD/g" wp-config-sample.php
-	sed -i "s/localhost/$MYSQL_HOSTNAME/g" wp-config-sample.php
-	sed -i "s/database_name_here/$MYSQL_DATABASE/g" wp-config-sample.php
-	cp wp-config-sample.php wp-config.php
-
+wp_download()
+{
+    if wp core download --allow-root; 
+    then
+        return 1
+    else
+        return 0
     fi
+}
+
+wp_config() 
+{
+    if wp config create \
+        --allow-root \
+        --path=/var/www/html/ \
+        --dbname=$MYSQL_DATABASE \
+        --dbuser=$MYSQL_USER \
+        --dbpass=$MYSQL_PASSWORD \
+        --dbhost=$MARIADB_HOST
+    then
+        return 1
+    else
+        return 0
+    fi
+}
+
+wp_install()
+{
+    if wp core install    \
+        --allow-root \
+        --title=$WP_TITLE \
+        --admin_user=$WP_ADMIN \
+        --admin_password=$WP_ADMIN_PASS \
+        --admin_email=$WP_ADMIN_EMAIL \
+        --url=$WP_URL 
+    then
+        wp user create \
+        --allow-root \
+        $WP_USER $WP_USER_EMAIL \
+        --user_pass=$WP_USER_PASS
+        return 1
+    else
+        return 0
+    fi
+}
+
+# This section of the shell script checks if the file specified by the variable `` exists.
+
+    command=0
+    attempts=0
+    max_attempts=5
+    
+    cd /var/www/html/
+
+    while [ $attempts -le $max_attempts ]; do
+
+        if [ $command -eq 0 ]; then
+            echo "Downloading Wordpress..."
+            wp_download
+            ((command+=1))
+        fi
+        if [ $command -eq 1 ]; then
+            echo "Configuring Wordpress..."
+            wp_config
+            ((command+=1))
+        fi
+        if [ $command -eq 2 ]; then
+            echo "Installing Wordpress..."
+            wp_install
+            ((command+=1))
+        fi
+        if [ $command -ge 3 ]; then
+            break
+        fi
+        ((attempts+=1))
+
+        sleep 1
+
+    done
+    
+    if [ $attempts -ge $max_attempts ]; then
+        echo "Failed to install Wordpress"
+    else
+        echo "Wordpress installed successfully"
+    fi
+  
 
 exec "$@"

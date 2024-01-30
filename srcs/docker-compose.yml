@@ -7,9 +7,11 @@ services:
       - 443:443
     volumes:
       - wordpress_data:/var/www/html
-    restart: always
+    restart: on-failure
     networks:
       - network
+    depends_on:
+      - wordpress
 
   mariadb:
     container_name: mariadb
@@ -21,7 +23,7 @@ services:
     # in case of problem we restart automatically the container
     networks:
       - network
-    restart: always
+    restart: on-failure
     env_file:
       - .env
 
@@ -33,13 +35,14 @@ services:
     build:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
-    restart: always
+    restart: on-failure
     env_file:
       - .env
     volumes:
       - wordpress_data:/var/www/html
     networks:
       - network
+
 volumes:
   mariadb_data:
     driver: local

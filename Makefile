@@ -33,6 +33,7 @@ fclean: clean
 	sudo rm -rf /home/abaiao-r/data/mysql/*
 	sudo rm -rf /home/abaiao-r/data/wordpress/*
 
+
 re: fclean build
 
 # Declare the targets as phony to avoid conflicts with file names

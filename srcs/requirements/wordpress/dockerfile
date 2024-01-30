@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-FROM debian:buster
+FROM debian:bullseye
 
 RUN apt-get update && apt-get -y install \
 	wget \
@@ -25,27 +25,23 @@ RUN apt-get update && apt-get -y install \
 	php-mbstring \
 	&& rm -rf /var/lib/apt/lists/*
 
-# I need to install wp_cli command and put it in the right directory /usr/local/bin
+# Install wp-cli and make it available in the PATH
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-  && chmod +x wp-cli.phar \
-  && mv wp-cli.phar /usr/local/bin/wp
+    && chmod +x wp-cli.phar \
+    && mv wp-cli.phar /usr/local/bin/wp
 
-# Copy the .conf in the html directory
-COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+# This directory is required for creating the php7.4-fpm.pid file
+RUN mkdir /run/php/ && chmod 755 /run/php/
 
-#Create the folder to enable php start
-RUN mkdir /run/php
+# Update the 'listen' configuration in www.conf to use a network socket (0.0.0.0:9000)
+RUN sed -i 's+listen = /run/php/php7.4-fpm.sock+listen = 9000+g' /etc/php/7.4/fpm/pool.d/www.conf
 
-#we copy the script, give the right to launch it in local on our computer
-COPY ./tools/create_wordpress.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/create_wordpress.sh
-ENTRYPOINT ["/usr/local/bin/create_wordpress.sh"]
+# Copy the configuration file for php-fpm
+COPY ./tools/create_wordpress.sh /home
+RUN chmod +x /home/create_wordpress.sh
 
-#We go the html directory
-WORKDIR /var/www/html/
-
-#We expose the 9000 port
 EXPOSE 9000
 
-#Launch PHP FPM in foreground and ignore deamonize from conf file (-F)
-CMD ["/usr/sbin/php-fpm7.3", "-F"]
+ENTRYPOINT ["/home/create_wordpress.sh"]
+
+CMD ["php-fpm7.4", "-F", "-R"]
