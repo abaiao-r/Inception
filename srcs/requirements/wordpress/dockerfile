@@ -23,8 +23,6 @@ RUN apt-get update && apt-get -y install \
 	php-pdo \
 	php-gd php-cli \
 	php-mbstring \
-	redis \
-	php-redis \
 	&& rm -rf /var/lib/apt/lists/*
 
 # I need to install wp_cli command and put it in the right directory /usr/local/bin
@@ -41,11 +39,11 @@ RUN mkdir /run/php
 #we copy the script, give the right to launch it in local on our computer
 COPY ./tools/create_wordpress.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/create_wordpress.sh
-ENTRYPOINT ["/usr/local/bin/create_wordpress.sh"]
 
 #We go the html directory
 WORKDIR /var/www/html/
 
+ENTRYPOINT ["/usr/local/bin/create_wordpress.sh"]
 #We expose the 9000 port
 EXPOSE 9000
 

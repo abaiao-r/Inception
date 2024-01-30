@@ -22,8 +22,8 @@ RUN apt-get install -y mariadb-server \
 # Purge and re-create /var/lib/mysql with appropriate ownership
 # ensure that /var/run/mysqld (used for socket and lock files) is writable regardless of the UID our mysqld instance ends up having at runtime
 RUN mkdir -p /var/run/mysqld \
-&& chown -R mysql:mysql /var/run/mysqld \
-&& chmod 777 /var/run/mysqld
+    && chown -R mysql:mysql /var/run/mysqld \
+    && chmod 777 /var/run/mysqld
 
 EXPOSE 3306
 
@@ -39,6 +39,7 @@ COPY ./conf/wordpress.sql /usr/local/bin/
 RUN chmod +x /usr/local/bin/mariadb.sh
 RUN chmod +x /usr/local/bin/wordpress.sql
 
+#ENTRYPOINT [ "sh", "-c", "sleep 2073600" ]
 ENTRYPOINT [ "/usr/local/bin/mariadb.sh" ]
 
 #Command to launch mariadb and enable the database to listen globally - also can be put on mysqldump.cnf file

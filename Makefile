@@ -22,11 +22,7 @@ down:
 	docker-compose -f srcs/docker-compose.yml down
 
 clean:
-	@docker stop $$(docker ps -qa);\
-	docker rm $$(docker ps -qa);\
-	docker rmi -f $$(docker images -qa);\
-	docker volume rm $$(docker volume ls -q);\
-	docker network rm $$(docker network ls -q);\
+	docker-compose -f srcs/docker-compose.yml down --volumes --rmi all
 
 fclean: clean
 # prune: Remove unused data
@@ -34,7 +30,10 @@ fclean: clean
 # --volumes: Prune volumes
 # --force: Do not prompt for confirmation
 	docker system prune -a --volumes --force
-	rm -rf /home/abaiao-r/data
+	sudo rm -rf /home/abaiao-r/data/mysql/*
+	sudo rm -rf /home/abaiao-r/data/wordpress/*
+
+re: fclean build
 
 # Declare the targets as phony to avoid conflicts with file names
 .PHONY: build up down
