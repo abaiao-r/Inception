@@ -30,11 +30,13 @@ fclean: clean
 # --volumes: Prune volumes
 # --force: Do not prompt for confirmation
 	docker system prune -a --volumes --force
+	docker network ls -q -f "driver=custom" | xargs -r docker network rm 2>/dev/null
 	sudo rm -rf /home/abaiao-r/data/mysql/*
 	sudo rm -rf /home/abaiao-r/data/wordpress/*
 
 
 re: fclean build
+
 
 # Declare the targets as phony to avoid conflicts with file names
 .PHONY: build up down

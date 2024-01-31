@@ -26,12 +26,19 @@ services:
     restart: on-failure
     env_file:
       - .env
+    # we can define a healthcheck to check if the container is healthy
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "--silent"]
+      interval: 5s
+      timeout: 30s
+      retries: 10
 
   wordpress:
     container_name: wordpress
     #Create a depedency between the 2 container, db will be launched before
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     build:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
