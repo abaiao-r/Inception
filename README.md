@@ -194,4 +194,30 @@ fc0273878ddd   srcs_docker-network   bridge    local
 
 - srcs_docker-network: This appears to be a custom network named srcs_docker-network using the bridge driver. Custom networks are often created to enable communication between specific containers.
 
+# Relationships in a Docker Project: Nginx, WordPress, MariaDB
+
+## Nginx (Web Server):
+- **Role:** Nginx acts as a web server and a reverse proxy in this setup.
+- **Responsibility:** It receives incoming web requests and directs them to the appropriate service (in this case, WordPress).
+- **Connection to WordPress:** Nginx communicates with the WordPress service to serve web pages and content. It passes requests to the WordPress service and manages the traffic flow.
+
+## WordPress (Web Application):
+- **Role:** WordPress is the web application responsible for managing and displaying the website's content.
+- **Responsibility:** It handles user requests, generates dynamic web pages, and interacts with the MariaDB database to store and retrieve data (like posts, pages, and user information).
+- **Connection to Nginx:** WordPress communicates with Nginx to receive user requests and deliver web pages. Nginx acts as a gateway for external requests to reach the WordPress application.
+
+## MariaDB (Database):
+- **Role:** MariaDB is the database server storing the data needed by the WordPress application.
+- **Responsibility:** It manages the storage and retrieval of structured data, such as posts, comments, and user information, essential for the functioning of the WordPress site.
+- **Connection to WordPress:** WordPress connects to MariaDB to read and write data. For example, when a user adds a new post or comments on a page, WordPress interacts with MariaDB to store that information.
+
+## Overview of the Flow:
+1. A user sends a request to the website (e.g., visiting a page).
+2. Nginx receives the request and forwards it to the WordPress service.
+3. WordPress generates the necessary content by interacting with the MariaDB database.
+4. MariaDB stores and retrieves data requested by WordPress.
+5. WordPress sends the generated web page back to Nginx.
+6. Nginx delivers the web page to the user's browser.
+
+In summary, Nginx handles web traffic, directs requests to WordPress, WordPress manages the application logic and content generation, and MariaDB stores and retrieves data for WordPress. Together, they form a well-coordinated system to serve dynamic content on the web.
 
