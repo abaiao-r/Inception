@@ -29,6 +29,7 @@ RUN mkdir -p /etc/nginx/ssl && \
 # Copy Nginx configuration files
 COPY ./conf/nginx.conf /etc/nginx/conf.d
 
+# Create a folder for the Nginx PID file
 RUN mkdir -p /run/nginx
 
 # Expose port 443 for HTTPS

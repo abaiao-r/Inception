@@ -9,7 +9,7 @@ services:
       - wordpress_data:/var/www/html
     restart: on-failure
     networks:
-      - network
+      - docker-network
     depends_on:
       - wordpress
 
@@ -22,7 +22,7 @@ services:
       - mariadb_data:/var/lib/mysql
     # in case of problem we restart automatically the container
     networks:
-      - network
+      - docker-network
     restart: on-failure
     env_file:
       - .env
@@ -48,7 +48,7 @@ services:
     volumes:
       - wordpress_data:/var/www/html
     networks:
-      - network
+      - docker-network
 
 volumes:
   mariadb_data:
@@ -64,5 +64,5 @@ volumes:
       device: /home/abaiao-r/data/wordpress
       o: bind
 networks:
-  network:
+  docker-network:
     driver: bridge

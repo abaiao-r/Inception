@@ -10,6 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
+#
 FROM debian:bullseye
 
 RUN apt-get update && apt-get -y install \
@@ -40,8 +41,13 @@ RUN sed -i 's+listen = /run/php/php7.4-fpm.sock+listen = 9000+g' /etc/php/7.4/fp
 COPY ./tools/create_wordpress.sh /home
 RUN chmod +x /home/create_wordpress.sh
 
+# Expose port 9000 to the Docker host, so we can access it
 EXPOSE 9000
 
+# Set the current working directory to /app
 ENTRYPOINT ["/home/create_wordpress.sh"]
 
+# Run php-fpm7.4 when the container launches. 
+# php-fpm7.4 will listen for FastCGI requests on port 9000.
+# -F stay in foreground, -R specify the root path
 CMD ["php-fpm7.4", "-F", "-R"]

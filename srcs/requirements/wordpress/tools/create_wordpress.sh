@@ -2,8 +2,11 @@
 
 sleep 3
 
+
+# Define the path to the WordPress configuration file
 conf_file="/var/www/html/wp-config.php"
 
+# Function to download WordPress core files
 wp_download()
 {
     if wp core download --allow-root; 
@@ -14,6 +17,7 @@ wp_download()
     fi
 }
 
+# Function to create the wordpress configuration (wp-config.php)
 wp_config() 
 {
     if wp config create \
@@ -30,6 +34,7 @@ wp_config()
     fi
 }
 
+# Function to install WordPress
 wp_install()
 {
     if wp core install    \
@@ -51,13 +56,16 @@ wp_install()
 }
 
 # This section of the shell script checks if the file specified by the variable `` exists.
-
+    # Initialization
     command=0
     attempts=0
     max_attempts=5
     
+    # change directory to WordPress installation path
     cd /var/www/html/
 
+    # Loop until the file is downloaded or the number of attempts 
+    # has exceeded the maximum 
     while [ $attempts -le $max_attempts ]; do
 
         if [ $command -eq 0 ]; then
