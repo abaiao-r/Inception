@@ -1,5 +1,16 @@
 https://www.debian.org/releases/
 
+https://abaiao-r.42.fr/wp-admin/
+https://abaiao-r.42.fr
+https://localhost
+
+make connect
+show databases;
+use mydatabase;
+show tables;
+
+docker exec -it wordpress /bin/bash 
+wp user list --allow-root
 
 The Docker Wall, Hillary's Emails, and Fake News Bonanza
 

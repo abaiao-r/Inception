@@ -24,6 +24,12 @@ build:
 down:
 	docker-compose -f srcs/docker-compose.yml down
 
+start:
+	docker-compose -f srcs/docker-compose.yml start
+
+stop:
+	docker-compose -f srcs/docker-compose.yml stop
+
 clean:
 	docker-compose -f srcs/docker-compose.yml down --volumes --rmi all
 
@@ -53,8 +59,11 @@ info:
 	@docker network ls
 	@echo "------------------------------------------------------------
 
-connect:
+connect-mariadb:
 	docker exec -it mariadb mysql -u root -p
+
+connect-wordpress:
+	docker exec -it wordpress /bin/bash
 
 # Declare the targets as phony to avoid conflicts with file names
 .PHONY: build up down clean fclean re info connect

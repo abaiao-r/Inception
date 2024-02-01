@@ -44,6 +44,8 @@ RUN chmod +x /home/create_wordpress.sh
 # Expose port 9000 to the Docker host, so we can access it
 EXPOSE 9000
 
+WORKDIR /var/www/html
+
 # Set the current working directory to /app
 ENTRYPOINT ["/home/create_wordpress.sh"]
 
